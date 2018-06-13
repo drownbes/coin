@@ -1,0 +1,27 @@
+{
+  "name": "coin",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@material-ui/core": "^1.2.0",
+    "@material-ui/icons": "^1.1.0",
+    "react": "^16.4.0",
+    "react-dom": "^16.4.0",
+    "react-relay": "^1.6.0",
+    "react-scripts": "1.1.4"
+  },
+  "scripts": {
+    "eject": "react-scripts eject",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test --env=jsdom",
+    "relay": "get-graphql-schema https://api.graph.cool/relay/v1/cjhriygub1ujp0162c99ieakf > ./schema.graphql && relay-compiler --src ./src --schema ./schema.graphql --extensions js jsx"
+  },
+  "devDependencies": {
+    "babel-plugin-relay": "^1.6.0",
+    "get-graphql-schema": "^2.1.1",
+    "graphql": "^0.13.2",
+    "react-app-rewired": "^1.5.2",
+    "relay-compiler": "^1.6.0"
+  }
+}

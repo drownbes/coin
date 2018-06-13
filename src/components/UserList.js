@@ -39,7 +39,7 @@ class UserList extends Component {
 
   handleCreate = newUser => {
     const { viewer, relay } = this.props;
-    CreateUserMutation(relay.environment, viewer.id, newUser);
+    CreateUserMutation(relay.environment, viewer.id, newUser, this.props.filter);
     this.closeCreateDialog();
   };
 
@@ -58,8 +58,6 @@ class UserList extends Component {
         viewer={this.props.viewer}
         user={edge.node}
         key={edge.cursor}
-        onEdit={this.props.onEdit}
-        onDelete={this.props.onDelete}
       />
     );
   };

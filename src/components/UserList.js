@@ -58,6 +58,7 @@ class UserList extends Component {
         viewer={this.props.viewer}
         user={edge.node}
         key={edge.cursor}
+        filter={this.props.filter}
       />
     );
   };

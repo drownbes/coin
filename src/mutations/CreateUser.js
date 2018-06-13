@@ -1,6 +1,6 @@
 import { commitMutation, graphql } from "react-relay";
 import {ConnectionHandler} from 'relay-runtime';
-import { uniqID } from "../utils";
+import { uniqID, isFiltered } from "../utils";
 
 const mutation = graphql`
   mutation CreateUserMutation($input: UpdateOrCreateUserInput!) {
@@ -16,11 +16,6 @@ const mutation = graphql`
     }
   }
 `;
-
-function isFiltered(filter, newUser) {
-  return (filter === 'show_active' && !newUser.active) ||
-    (filter === 'show_inactive' && newUser.active);
-}
 
 function sharedUpdater(proxyStore, parentID, userEdge) {
   const viewerProxy = proxyStore.get(parentID)

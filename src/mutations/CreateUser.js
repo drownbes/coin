@@ -1,5 +1,5 @@
 import { commitMutation, graphql } from "react-relay";
-import {ConnectionHandler} from 'relay-runtime';
+import { ConnectionHandler } from "relay-runtime";
 import { uniqID, isFiltered } from "../utils";
 
 const mutation = graphql`
@@ -10,6 +10,7 @@ const mutation = graphql`
           name
           email
           active
+          id
         }
         cursor
       }
@@ -18,10 +19,13 @@ const mutation = graphql`
 `;
 
 function sharedUpdater(proxyStore, parentID, userEdge) {
-  const viewerProxy = proxyStore.get(parentID)
-  const connection = ConnectionHandler.getConnection(viewerProxy, 'UserList_allUsers')
+  const viewerProxy = proxyStore.get(parentID);
+  const connection = ConnectionHandler.getConnection(
+    viewerProxy,
+    "UserList_allUsers"
+  );
   if (connection) {
-    ConnectionHandler.insertEdgeAfter(connection, userEdge)
+    ConnectionHandler.insertEdgeAfter(connection, userEdge);
   }
 }
 
@@ -39,29 +43,30 @@ export default function commit(environment, parentID, newUser, filter) {
         clientMutationId: mutationID
       }
     },
-    optimisticUpdater: (proxyStore) => {
+    optimisticUpdater: proxyStore => {
       if (isFiltered(filter, newUser)) {
         return;
       }
-      const user = proxyStore.create(dummyID, 'User');
-      user.setValue(dummyID, 'id');
+      const user = proxyStore.create(dummyID, "User");
+      user.setValue(dummyID, "id");
       Object.entries(newUser).forEach(([key, value]) => {
         user.setValue(value, key);
-      })
+      });
       const userEdge = proxyStore.create(
         `client:${parentID}:__UserList_allUsers_connection:edges:${mutationID}`,
-        'UserEdge',
+        "UserEdge"
       );
-      userEdge.setLinkedRecord(user, 'node');
+      userEdge.setLinkedRecord(user, "node");
+      userEdge.setValue(dummyID, "cursor");
       sharedUpdater(proxyStore, parentID, userEdge);
     },
 
-    updater: (proxyStore) => {
+    updater: proxyStore => {
       if (isFiltered(filter, newUser)) {
         return;
       }
-      const updateOrCreateUser = proxyStore.getRootField('updateOrCreateUser')
-      const userEdge = updateOrCreateUser.getLinkedRecord('edge');
+      const updateOrCreateUser = proxyStore.getRootField("updateOrCreateUser");
+      const userEdge = updateOrCreateUser.getLinkedRecord("edge");
       sharedUpdater(proxyStore, parentID, userEdge);
     }
   });

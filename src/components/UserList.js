@@ -12,12 +12,15 @@ import User from "../components/User";
 import UserDialog from "./UserDialog";
 import CreateUserMutation from "../mutations/CreateUser";
 import { filterStrToObject } from "../utils";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 class UserList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      createDialogOpenned: false
+      createDialogOpenned: false,
+      filter: "",
+      loading: false
     };
   }
 
@@ -34,12 +37,31 @@ class UserList extends Component {
   };
 
   setFilter = e => {
-    this.props.setFilter(e.target.value);
+    this.setState({
+      filter: e.target.value,
+      loading: true
+    });
+    this.props.relay.refetchConnection(
+      10,
+      error => {
+        this.setState({
+          loading: false
+        });
+      },
+      {
+        filter: filterStrToObject(e.target.value)
+      }
+    );
   };
 
   handleCreate = newUser => {
     const { viewer, relay } = this.props;
-    CreateUserMutation(relay.environment, viewer.id, newUser, this.props.filter);
+    CreateUserMutation(
+      relay.environment,
+      viewer.id,
+      newUser,
+      this.state.filter
+    );
     this.closeCreateDialog();
   };
 
@@ -47,8 +69,13 @@ class UserList extends Component {
     if (!this.props.relay.hasMore() || this.props.relay.isLoading()) {
       return;
     }
+    this.setState({
+      loading: true
+    });
     this.props.relay.loadMore(10, error => {
-      console.log(error);
+      this.setState({
+        loading: false
+      });
     });
   };
 
@@ -58,22 +85,27 @@ class UserList extends Component {
         viewer={this.props.viewer}
         user={edge.node}
         key={edge.cursor}
-        filter={this.props.filter}
+        filter={this.state.filter}
       />
     );
   };
 
   render() {
     const hasMore = this.props.relay.hasMore();
+    const throbberStyle = {
+      position: "absolute",
+      top: "calc(50% - 50px)",
+      left: "calc(50% - 50px) "
+    };
     return (
-      <div>
+      <div style={{ position: "relative" }}>
         <AppBar position="sticky" color="default">
           <Toolbar>
             {hasMore && <Button onClick={this.loadMore}>Load more</Button>}
             <Button onClick={this.openCreateDialog}>Create user</Button>
             <FormControl style={{ alignSelf: "baseline", width: 200 }}>
               <InputLabel>Filter</InputLabel>
-              <Select value={this.props.filter} onChange={this.setFilter}>
+              <Select value={this.state.filter} onChange={this.setFilter}>
                 <MenuItem value="">
                   <em>None</em>
                 </MenuItem>
@@ -83,6 +115,9 @@ class UserList extends Component {
             </FormControl>
           </Toolbar>
         </AppBar>
+        {this.state.loading && (
+          <CircularProgress style={throbberStyle} size={100} />
+        )}
         <List>{this.props.viewer.allUsers.edges.map(this.renderUser)}</List>
         <UserDialog
           title="Create user"
@@ -136,7 +171,7 @@ export default createPaginationContainer(
       return {
         count,
         cursor,
-        filter: filterStrToObject(props.filter)
+        filter: fragmentVariables.filter
       };
     },
     query: graphql`

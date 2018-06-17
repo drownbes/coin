@@ -31,10 +31,15 @@ class User extends Component {
 
   handleSave = updatedUser => {
     const { relay, viewer, user, filter } = this.props;
-    UpdateUserMutation(relay.environment, viewer.id, {
-      ...updatedUser,
-      id: user.id
-    }, filter);
+    UpdateUserMutation(
+      relay.environment,
+      viewer.id,
+      {
+        ...updatedUser,
+        id: user.id
+      },
+      filter
+    );
     this.closeEditDialog();
   };
 

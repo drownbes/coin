@@ -1,5 +1,5 @@
 import { commitMutation, graphql } from "react-relay";
-import {ConnectionHandler} from 'relay-runtime';
+import { ConnectionHandler } from "relay-runtime";
 import { uniqID, isFiltered } from "../utils";
 
 const mutation = graphql`
@@ -17,7 +17,10 @@ const mutation = graphql`
 
 function sharedUpdater(proxyStore, parentID, userID) {
   const viewerProxy = proxyStore.get(parentID);
-  const connection = ConnectionHandler.getConnection(viewerProxy, 'UserList_allUsers')
+  const connection = ConnectionHandler.getConnection(
+    viewerProxy,
+    "UserList_allUsers"
+  );
   if (connection) {
     ConnectionHandler.deleteNode(connection, userID);
   }

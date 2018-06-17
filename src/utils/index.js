@@ -16,12 +16,12 @@ export const filterStrToObject = filterStr => {
 };
 
 export function isFiltered(filter, newUser) {
-  return (filter === 'show_active' && !newUser.active) ||
-    (filter === 'show_inactive' && newUser.active);
+  return (
+    (filter === "show_active" && !newUser.active) ||
+    (filter === "show_inactive" && newUser.active)
+  );
 }
 
 let id = 0;
 let prefix = "mutation_";
 export const uniqID = () => prefix + id++;
-
-

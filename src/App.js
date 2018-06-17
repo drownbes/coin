@@ -3,25 +3,17 @@ import { graphql, QueryRenderer } from "react-relay";
 import environment from "./environment";
 import UserList from "./components/UserList";
 import Paper from "@material-ui/core/Paper";
-import { filterStrToObject } from "./utils";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      createDialogOpenned: false,
-      filter: ""
+      createDialogOpenned: false
     };
   }
 
-  setFilter = filter => {
-    this.setState({
-      filter
-    });
-  };
-
   render() {
-    const filter = filterStrToObject(this.state.filter);
     return (
       <QueryRenderer
         environment={environment}
@@ -33,25 +25,18 @@ export default class App extends React.Component {
             }
           }
         `}
-        variables={{
-          filter
-        }}
+        variables={{}}
         render={({ error, props }) => {
-          console.log(error, props);
           if (error) {
-            return <div>Error!</div>;
+            return <div>Error!{error}</div>;
           }
           if (!props) {
-            return <div>Loading...</div>;
+            return <CircularProgress />;
           }
           return (
             <div style={{ padding: 20, minWidth: 600 }}>
               <Paper>
-                <UserList
-                  viewer={props.viewer}
-                  filter={this.state.filter}
-                  setFilter={this.setFilter}
-                />
+                <UserList viewer={props.viewer} />
               </Paper>
             </div>
           );

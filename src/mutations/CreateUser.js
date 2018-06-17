@@ -66,8 +66,10 @@ export default function commit(environment, parentID, newUser, filter) {
         return;
       }
       const updateOrCreateUser = proxyStore.getRootField("updateOrCreateUser");
-      const userEdge = updateOrCreateUser.getLinkedRecord("edge");
-      sharedUpdater(proxyStore, parentID, userEdge);
+      if(updateOrCreateUser) {
+        const userEdge = updateOrCreateUser.getLinkedRecord("edge");
+        sharedUpdater(proxyStore, parentID, userEdge);
+      }
     }
   });
 }

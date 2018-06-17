@@ -37,6 +37,10 @@ export default class UserDialog extends Component {
     });
   };
 
+  isValid = () => {
+    return (this.state.name !== "") && (this.state.email !== "");
+  }
+
   onChange = e => {
     this.setState({ [e.target.name]: e.target.value });
   };
@@ -87,7 +91,7 @@ export default class UserDialog extends Component {
           <Button onClick={this.onCancel} color="primary">
             Cancel
           </Button>
-          <Button onClick={this.onSave} color="primary">
+          <Button onClick={this.onSave} disabled={!this.isValid()} color="primary">
             Save
           </Button>
         </DialogActions>
